@@ -1,3 +1,4 @@
+<?php /** @var array $games */ ?>
 <div class="text-center mb-12">
     <h1 class="text-4xl font-extrabold text-sakura-600 mb-4">Chào mừng đến với OmniPuzzle!</h1>
     <p class="text-lg text-gray-600">Rèn luyện trí não mỗi ngày với hàng loạt thử thách logic hấp dẫn.</p>
