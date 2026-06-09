@@ -33,21 +33,20 @@ class App {
     }
 
     public function parseUrl() {
-        // Lấy đường dẫn thực tế đang gõ trên trình duyệt (VD: /auth/login)
-        $requestUri = $_SERVER['REQUEST_URI'];
+        // Lấy đường dẫn thực tế đang gõ trên trình duyệt (VD: /game/play/minesweeper)
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
         
-        // Loại bỏ các tham số phía sau dấu ? nếu có (VD: ?id=1)
+        // Loại bỏ các tham số phía sau dấu ? nếu có
         $requestUri = explode('?', $requestUri)[0];
 
         // Cắt bỏ dấu gạch chéo '/' ở đầu và cuối chuỗi
         $requestUri = trim($requestUri, '/');
 
-        // Nếu có đường dẫn thì cắt thành mảng để lấy Controller và Method
+        // Nếu có đường dẫn thì cắt thành mảng
         if (!empty($requestUri)) {
             return explode('/', filter_var($requestUri, FILTER_SANITIZE_URL));
         }
         
-        // Trả về mảng rỗng nếu đang ở trang chủ gốc (/)
         return [];
     }
 }
