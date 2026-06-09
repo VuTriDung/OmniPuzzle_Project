@@ -1,3 +1,4 @@
+<?php /** @var string $view_content */ ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
