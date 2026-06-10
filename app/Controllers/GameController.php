@@ -2,7 +2,7 @@
 // app/Controllers/GameController.php
 class GameController extends Controller {
     
-    // Hàm gọi giao diện chơi game
+    // app/Controllers/GameController.php (Trích đoạn hàm play)
     public function play($slug = '') {
         if (empty($slug)) {
             header('Location: /');
@@ -17,9 +17,15 @@ class GameController extends Controller {
         } elseif ($slug == 'sudoku') { 
             $data['title'] = 'Sudoku Classic';
             $this->view('games/sudoku', $data);
-        } elseif ($slug == 'tic-tac-toe') { // THÊM NHÁNH NÀY
+        } elseif ($slug == 'tic-tac-toe') { 
             $data['title'] = 'Cờ Caro (Vs Máy)';
             $this->view('games/tic-tac-toe', $data);
+        } elseif ($slug == 'flow-free') { // THÊM NHÁNH NÀY ĐỂ KẾT NỐI FLOW FREE
+            $data['title'] = 'Flow Free - Nối Điểm Màu';
+            $this->view('games/flow-free', $data);
+        } elseif ($slug == 'unblock-me') {
+            $data['title'] = 'Unblock Me - Giải Cứu Khối Gỗ';
+            $this->view('games/unblock-me', $data);
         } else {
             echo "Game đang được phát triển!";
         }
