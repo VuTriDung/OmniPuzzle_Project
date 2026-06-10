@@ -1,6 +1,3 @@
-// public/js/minesweeper.js
-
-// Các hằng số cấu hình
 const CONFIG = {
     easy: { rows: 9, cols: 9, mines: 10, points: 5 },
     medium: { rows: 16, cols: 16, mines: 40, points: 15 },
@@ -17,7 +14,6 @@ let timerInterval = null;
 let revealedCount = 0;
 let flagsPlaced = 0;
 
-// Các DOM Elements
 const introScreen = document.getElementById('intro-screen');
 const gameScreen = document.getElementById('game-screen');
 const gridContainer = document.getElementById('grid-container');
@@ -25,7 +21,6 @@ const scoreEl = document.getElementById('score');
 const timerEl = document.getElementById('timer');
 const minesLeftEl = document.getElementById('mines-left');
 
-// 1. Khởi tạo Game
 function startGame(difficulty) {
     currentDiff = difficulty;
     isGameOver = false;
@@ -36,12 +31,10 @@ function startGame(difficulty) {
     flagsPlaced = 0;
     board = [];
 
-    // Cập nhật UI
     introScreen.classList.add('hidden');
     gameScreen.classList.remove('hidden');
     updateUI();
 
-    // Xóa timer cũ
     clearInterval(timerInterval);
     timerEl.innerText = "00:00";
 
@@ -49,37 +42,26 @@ function startGame(difficulty) {
     renderBoard();
 }
 
-// Trở về màn hình chờ
 function resetGame() {
     clearInterval(timerInterval);
     gameScreen.classList.add('hidden');
     introScreen.classList.remove('hidden');
 }
 
-// Khởi tạo mảng logic 2 chiều
 function initBoard() {
     const { rows, cols } = CONFIG[currentDiff];
     for (let r = 0; r < rows; r++) {
         let row = [];
         for (let c = 0; c < cols; c++) {
-            row.push({
-                r: r, c: c,
-                isMine: false,
-                isRevealed: false,
-                isFlagged: false,
-                neighborMines: 0
-            });
+            row.push({ r: r, c: c, isMine: false, isRevealed: false, isFlagged: false, neighborMines: 0 });
         }
         board.push(row);
     }
 }
 
-// Vẽ bàn cờ lên HTML
 function renderBoard() {
     const { rows, cols } = CONFIG[currentDiff];
     gridContainer.innerHTML = '';
-    
-    // Dùng CSS Grid để tạo lưới vuông vức
     gridContainer.style.display = 'grid';
     gridContainer.style.gridTemplateColumns = `repeat(${cols}, 30px)`;
     gridContainer.style.gridTemplateRows = `repeat(${rows}, 30px)`;
@@ -92,9 +74,7 @@ function renderBoard() {
             cellEl.dataset.r = r;
             cellEl.dataset.c = c;
             
-            // Xử lý click trái (Mở ô)
             cellEl.addEventListener('click', () => handleCellClick(r, c));
-            // Xử lý click phải (Cắm cờ)
             cellEl.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 handleRightClick(r, c);
@@ -105,16 +85,12 @@ function renderBoard() {
     }
 }
 
-// 2. Logic Trò chơi (Rải mìn sau click đầu tiên để tránh chết ngay)
 function placeMines(firstR, firstC) {
     const { rows, cols, mines } = CONFIG[currentDiff];
     let minesPlaced = 0;
-
     while (minesPlaced < mines) {
         let r = Math.floor(Math.random() * rows);
         let c = Math.floor(Math.random() * cols);
-
-        // Không đặt mìn vào ô đầu tiên click hoặc ô đã có mìn
         if (!board[r][c].isMine && (r !== firstR || c !== firstC)) {
             board[r][c].isMine = true;
             minesPlaced++;
@@ -126,30 +102,25 @@ function placeMines(firstR, firstC) {
 function calculateNeighbors() {
     const { rows, cols } = CONFIG[currentDiff];
     const directions = [[-1,-1], [-1,0], [-1,1], [0,-1], [0,1], [1,-1], [1,0], [1,1]];
-
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             if (board[r][c].isMine) continue;
             let count = 0;
             directions.forEach(([dr, dc]) => {
                 let nr = r + dr, nc = c + dc;
-                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc].isMine) {
-                    count++;
-                }
+                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && board[nr][nc].isMine) count++;
             });
             board[r][c].neighborMines = count;
         }
     }
 }
 
-// 3. Xử lý tương tác
 function handleCellClick(r, c) {
     if (isGameOver || board[r][c].isRevealed || board[r][c].isFlagged) return;
 
     if (firstClick) {
         firstClick = false;
         placeMines(r, c);
-        // Bắt đầu đếm thời gian
         timerInterval = setInterval(() => {
             timeElapsed++;
             let m = String(Math.floor(timeElapsed / 60)).padStart(2, '0');
@@ -159,7 +130,7 @@ function handleCellClick(r, c) {
     }
 
     if (board[r][c].isMine) {
-        gameOver(false); // Thua
+        gameOver(false); 
     } else {
         revealCell(r, c);
         checkWinCondition();
@@ -168,21 +139,19 @@ function handleCellClick(r, c) {
 
 function handleRightClick(r, c) {
     if (isGameOver || board[r][c].isRevealed) return;
-
     board[r][c].isFlagged = !board[r][c].isFlagged;
     flagsPlaced += board[r][c].isFlagged ? 1 : -1;
-    
     updateVisuals();
+    updateUI();
 }
 
-// Thuật toán Loang (Flood Fill) để mở các ô lân cận nếu là ô trống (0 mìn)
 function revealCell(r, c) {
     const { rows, cols, points } = CONFIG[currentDiff];
     if (r < 0 || r >= rows || c < 0 || c >= cols || board[r][c].isRevealed || board[r][c].isFlagged) return;
 
     board[r][c].isRevealed = true;
     revealedCount++;
-    score += points; // Cộng điểm
+    score += points; 
     updateVisuals();
     updateUI();
 
@@ -192,11 +161,9 @@ function revealCell(r, c) {
     }
 }
 
-// 4. Cập nhật giao diện theo mảng logic
 function updateVisuals() {
     const { rows, cols } = CONFIG[currentDiff];
     const cells = gridContainer.children;
-
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const index = r * cols + c;
@@ -206,13 +173,11 @@ function updateVisuals() {
             if (cellData.isRevealed) {
                 cellEl.classList.remove('bg-sakura-100', 'hover:bg-sakura-200', 'cursor-pointer');
                 cellEl.classList.add('bg-white', 'cursor-default');
-                
                 if (cellData.isMine) {
                     cellEl.classList.add('bg-red-500');
                     cellEl.innerText = '💣';
                 } else if (cellData.neighborMines > 0) {
                     cellEl.innerText = cellData.neighborMines;
-                    // Tạo màu số cho đẹp
                     const colors = ['','text-blue-500', 'text-green-500', 'text-red-500', 'text-purple-500', 'text-yellow-600', 'text-cyan-500', 'text-black', 'text-gray-500'];
                     cellEl.classList.add(colors[cellData.neighborMines]);
                 }
@@ -230,12 +195,9 @@ function updateUI() {
     minesLeftEl.innerText = CONFIG[currentDiff].mines - flagsPlaced;
 }
 
-// 5. Kết thúc Game & Submit API
 function checkWinCondition() {
     const { rows, cols, mines } = CONFIG[currentDiff];
-    if (revealedCount === (rows * cols - mines)) {
-        gameOver(true); // Thắng
-    }
+    if (revealedCount === (rows * cols - mines)) gameOver(true);
 }
 
 function gameOver(isWin) {
@@ -243,9 +205,8 @@ function gameOver(isWin) {
     clearInterval(timerInterval);
 
     if (!isWin) {
-        score = 0; // Đạp mìn -> Mất hết điểm
+        score = 0; 
         updateUI();
-        // Hiển thị toàn bộ mìn ẩn
         const { rows, cols } = CONFIG[currentDiff];
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
@@ -257,8 +218,6 @@ function gameOver(isWin) {
     } else {
         setTimeout(() => alert(`Chúc mừng! Bạn đã gỡ sạch mìn trong ${timerEl.innerText}.\nĐiểm số: ${score}`), 100);
     }
-
-    // Gửi điểm lên Backend bằng AJAX
     submitScoreToPHP(isWin);
 }
 
@@ -267,14 +226,7 @@ function submitScoreToPHP(isWin) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            game: 'minesweeper',
-            difficulty: currentDiff,
-            score: score,
-            time: timeElapsed * 1000, // Đổi giây ra mili-giây cho chuẩn DB
-            isWin: isWin
+            game: 'minesweeper', difficulty: currentDiff, score: score, time: timeElapsed * 1000, isWin: isWin
         })
-    })
-    .then(res => res.json())
-    .then(data => console.log('Server response:', data))
-    .catch(err => console.error('Lỗi lưu điểm:', err));
+    }).then(res => res.json()).then(data => console.log('Server response:', data)).catch(err => console.error('Lỗi:', err));
 }
