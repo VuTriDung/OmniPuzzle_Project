@@ -3,6 +3,7 @@
 class GameController extends Controller {
     
     // Hàm gọi giao diện chơi game
+    // app/Controllers/GameController.php (Trích đoạn hàm play)
     public function play($slug = '') {
         if (empty($slug)) {
             header('Location: /');
@@ -14,6 +15,9 @@ class GameController extends Controller {
         if ($slug == 'minesweeper') {
             $data['title'] = 'Dò Mìn (Minesweeper)';
             $this->view('games/minesweeper', $data); 
+        } elseif ($slug == 'sudoku') { // THÊM ĐOẠN NÀY
+            $data['title'] = 'Sudoku Classic';
+            $this->view('games/sudoku', $data);
         } else {
             echo "Game đang được phát triển!";
         }
