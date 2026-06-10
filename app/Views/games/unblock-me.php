@@ -47,9 +47,11 @@
         box-shadow: inset 0 0 0 2px rgba(255,255,255,0.2), 2px 2px 5px rgba(0,0,0,0.3);
         cursor: grab;
         transition: transform 0.1s;
-        touch-action: none; /* Rất quan trọng để chặn cuộn trang trên mobile khi kéo */
+        touch-action: none; 
     }
     .block-element:active { cursor: grabbing; transform: scale(0.98); }
     .block-wood { background: linear-gradient(to bottom right, #fcd34d, #d97706); }
     .block-target { background: linear-gradient(to bottom right, #f472b6, #be185d); z-index: 5; }
 </style>
+
+<script src="/js/unblock-me.js"></script>
