@@ -1,7 +1,7 @@
 <?php
 // app/Core/App.php
 class App {
-    protected $controller = 'HomeController'; // Mặc định vào trang chủ
+    protected $controller = 'HomeController';
     protected $method = 'index';
     protected $params = [];
 
@@ -33,20 +33,16 @@ class App {
     }
 
     public function parseUrl() {
-        // Lấy đường dẫn thực tế đang gõ trên trình duyệt (VD: /game/play/minesweeper)
+        // Lấy đường dẫn thực tế trên trình duyệt (VD: /game/play/minesweeper)
         $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
         
-        // Loại bỏ các tham số phía sau dấu ? nếu có
+        // Cắt bỏ phần query string (?id=1) nếu có
         $requestUri = explode('?', $requestUri)[0];
-
-        // Cắt bỏ dấu gạch chéo '/' ở đầu và cuối chuỗi
         $requestUri = trim($requestUri, '/');
 
-        // Nếu có đường dẫn thì cắt thành mảng
         if (!empty($requestUri)) {
             return explode('/', filter_var($requestUri, FILTER_SANITIZE_URL));
         }
-        
         return [];
     }
 }

@@ -1,14 +1,14 @@
 <?php
 // app/Core/Database.php
 class Database {
-    private $host = DB_HOST;
-    private $user = DB_USER;
-    private $pass = DB_PASS;
-    private $dbname = DB_NAME;
+    private string $host = DB_HOST;
+    private string $user = DB_USER;
+    private string $pass = DB_PASS;
+    private string $dbname = DB_NAME;
 
     private $dbh;
     private $stmt;
-    private $error;
+    private string $error;
 
     public function __construct() {
         $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname . ';charset=utf8mb4';
@@ -25,12 +25,10 @@ class Database {
         }
     }
 
-    // Chuẩn bị câu lệnh SQL
-    public function query($sql) {
+    public function query(string $sql) {
         $this->stmt = $this->dbh->prepare($sql);
     }
 
-    // Gán giá trị vào tham số để chống SQL Injection
     public function bind($param, $value, $type = null) {
         if (is_null($type)) {
             switch (true) {
@@ -43,23 +41,21 @@ class Database {
         $this->stmt->bindValue($param, $value, $type);
     }
 
-    // Thực thi lệnh
     public function execute() {
         return $this->stmt->execute();
     }
 
-    // Trả về nhiều dòng dữ liệu (ví dụ: lấy bảng xếp hạng)
     public function resultSet() {
         $this->execute();
         return $this->stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
-    // Trả về 1 dòng dữ liệu (ví dụ: lấy thông tin 1 user)
     public function single() {
         $this->execute();
         return $this->stmt->fetch(PDO::FETCH_OBJ);
     }
 
+    // Đã bổ sung hàm rowCount để đếm số dòng
     public function rowCount() {
         return $this->stmt->rowCount();
     }
